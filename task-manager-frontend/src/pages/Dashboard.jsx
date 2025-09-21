@@ -35,7 +35,15 @@ function TaskForm({ open, onClose, onSave, initial }) {
     const [startDate, setStartDate] = useState(initial?.startDate ? initial.startDate.slice(0, 10) : '');
     const [dueDate, setDueDate] = useState(initial?.dueDate ? initial.dueDate.slice(0, 10) : '');
     const [recurrence, setRecurrence] = useState(initial?.recurrence || 'None');
-    const [reminder, setReminder] = useState(initial?.reminder ? initial.reminder.slice(0, 16) : '');
+    // Convert UTC reminder to local for input field
+    const getLocalReminder = (utc) => {
+        if (!utc) return '';
+        const d = new Date(utc);
+        // Get local ISO string in 'YYYY-MM-DDTHH:mm' format
+        const pad = (n) => n.toString().padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    };
+    const [reminder, setReminder] = useState(initial?.reminder ? getLocalReminder(initial.reminder) : '');
     const [recurrenceInterval, setRecurrenceInterval] = useState(initial?.recurrenceInterval || '');
     const [recurrenceDays, setRecurrenceDays] = useState(initial?.recurrenceDays || []);
     const [intervalError, setIntervalError] = useState('');
